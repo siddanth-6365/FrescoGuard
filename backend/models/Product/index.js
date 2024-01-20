@@ -8,23 +8,17 @@ const ProductSchema = new mongoose.Schema({
     },
 
     pesticide: {
-        type: Number,
+        type: String,
         required: true,
     },
     
     sunlight: {
-        type: Number,
-        required: true,
-    },
-
-
-    price: {
-        type: Number,
+        type: String,
         required: true,
     },
 
     quantity: {
-        type: Number,
+        type: String,
         required: true,
     },
 

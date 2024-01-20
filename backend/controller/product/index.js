@@ -2,8 +2,9 @@ const Product = require('../../models/Product');
 
 
 module.exports.createProduct = async (req, res) => {
-    const { crop, pesticide, sunlight, price, quantity } = req.body;
-    const product = new Product({ crop, pesticide, sunlight, price, quantity });
+    const { crop, pesticide, sunlight, quantity, warehouseID } = req.body;
+    const product = new Product({ crop, pesticide, sunlight, quantity });
+    product.warehouse.push(warehouseID);
     await product.save();
     res.status(200).json("product created successfully");
 };
