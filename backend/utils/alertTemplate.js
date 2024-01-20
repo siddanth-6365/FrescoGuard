@@ -1,7 +1,7 @@
 const warehouse = require("../models/warehouse");
 
 
-exports.alertTemplate = (user, spoilagerate,days,warehouse) => {
+const alertTemplate = (user, spoilagerate,days,warehouse) => {
     return `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -81,3 +81,5 @@ exports.alertTemplate = (user, spoilagerate,days,warehouse) => {
     </html>
     `;
   };
+
+module.exports = alertTemplate;
