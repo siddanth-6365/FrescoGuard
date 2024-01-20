@@ -6,7 +6,7 @@
 Fresco Guard is a groundbreaking crop management solution that seamlessly integrates a dynamic Next.js frontend with a Python backend powered by advanced machine learning models. This single repository houses the complete source code, documentation, and resources for the Fresco Guard project, developed by Team Skyshots during the InnovateNSUT'24.
 
 ## Features
-- Real-time spoilage predictions utilizing Python-based AutoML models.
+- Real-time spoilage predictions utilizing Python-based Tensorflow model.
 - User-friendly Next.js interface for seamless data input and actionable recommendations.
 - Integration with real-time data updates for dynamic and adaptive predictions.
 - Continuous refinement through user testing and feedback.
