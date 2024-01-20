@@ -65,7 +65,9 @@ export default function SignUpForm() {
   };
 
   return (
-    <div className="relative flex flex-col justify-center items-center min-h-screen overflow-hidden">
+    <>
+     <div className="relative flex bg-black flex-col justify-center items-center min-h-screen overflow-hidden">
+      <div className=" font-bold mt-4 text-2xl text-yellow-300"><Link href={"/"}>Home</Link></div>
       <div className="w-full m-auto bg-white lg:max-w-lg">
         <Card>
           <CardHeader className="space-y-1">
@@ -99,15 +101,18 @@ export default function SignUpForm() {
             <Button className="w-full" onClick={handleSubmit}>
               login
             </Button>
+            <Link href="/auth/signup">
             <p className="mt-2 text-xs text-center text-gray-700">
               need to have an account?{" "}
-              <Link href="/auth/signup">
+              
                 <span className="text-blue-600 hover:underline">Sign up</span>
-              </Link>
+              
             </p>
+            </Link>
           </CardFooter>
         </Card>
       </div>
-    </div>
+    </div></>
+   
   );
 }
