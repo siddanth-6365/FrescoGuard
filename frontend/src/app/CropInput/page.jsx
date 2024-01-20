@@ -9,396 +9,241 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useWarehouseContext } from "@/components/contextapi/WarehouseContext";
+import { useToast } from "@/components/ui/use-toast"
 
 // Import statements (please include any necessary imports)
 
 const CropInput = () => {
-    const { state: warehouseState } = useWarehouseContext();
-  const { warehouses } = warehouseState;
-  console.log(warehouses)
   
-  // Assuming you have a selected warehouse ID in your state
-  const selectedWarehouseId = warehouseState.selectedWarehouseId;
-
-  const selectedWarehouse = warehouses.find(warehouse => warehouse.id === selectedWarehouseId);
-
-  const warehouseId = selectedWarehouse?.id || "";
-  const warehouseName = selectedWarehouse?.name || "";
   
-
+    const { toast } = useToast();
     const [crops, setCrops] = useState([]);
-    const [cropName, setCropName] = useState("Rice");
+    const [cropName, setCropName] = useState("");
     const [quantity, setQuantity] = useState("");
     const [editIndex, setEditIndex] = useState(null);
-   
     const [availableCrops, setAvailableCrops] = useState(["Rice", "Wheat", "Corn"]);
-
-   
+    const [availableWarehouse, setAvailableWarehouse] = useState([]);
+    const [sunlight, setSunlight] = useState("fullSun");
+    const [pesticide, setPesticide] = useState("organic");
+    const [moisture, setMoisture] = useState("");
+    const [temperature, setTemperature] = useState("");
+    const [warehouse, setWarehouse] = useState("");
+    const [warehouseId, setWarehouseId] = useState("");
+    
+    
 
     useEffect(() => {
-        // Fetch crops data for the warehouse ID
-        const fetchCrops = async () => {
-          const backendUrl = process.env.BACKEND_URL;
-          let userId = localStorage.getItem("userId");
-
-          if (userId && typeof userId === 'string') {
-            userId = userId.replace(/^"(.*)"$/, '$1');         
-          }
-          const apiUrl = `${backendUrl}/warehouse/`;
+        const getWarehouse = async () => {
+            const backendUrl = process.env.BACKEND_URL;
+            let userId = localStorage.getItem("userId");
     
-          try {
-            const response = await fetch(apiUrl);
-            if (response.ok) {
-              const data = await response.json();
-              setCrops(data);
-            } else {
-              console.error('Failed to fetch crops data.');
+            if (userId && typeof userId === 'string') {
+              userId = userId.replace(/^"(.*)"$/, '$1');         
             }
-          } catch (error) {
-            console.error('Error fetching crops data:', error);
+            console.log(userId);
+            const apiUrl = `${backendUrl}/warehouse/getallwarehouses/${userId}`;
+      
+            try {
+              const response = await fetch(apiUrl);
+              if (response.ok) {
+                const data = await response.json();
+                setAvailableWarehouse(data);
+                console.log(data);
+              } else {
+                console.error('Failed to fetch crops data.');
+              }
+            } catch (error) {
+              console.error('Error fetching crops data:', error);
+            }
           }
+          getWarehouse();        
+    }, []);
+
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      if (cropName && quantity) {
+        const newCrop = {
+          name: cropName,
+          quantity: quantity,
+          sunlight: sunlight,
+          pesticide: pesticide,
+          moisture: moisture,
+          warehouseID: warehouseId,
         };
-    
-        fetchCrops();
-      }, [warehouseId]);
-      const handleEditCrop2 = async (index) => {
-        const updatedCrops = [...crops];
-        const editedCrop = updatedCrops[index];
-        editedCrop.name = cropName;
-        editedCrop.quantity = quantity;
+        console.log(newCrop);
         
-    
-        // Make a PUT request to update the edited crop
-        const apiUrl = `YOUR_API_URL/crops`;
-    
+        const backendUrl = process.env.BACKEND_URL;
+        let userId = localStorage.getItem("userId");
+
+        if (userId && typeof userId === 'string') {
+          userId = userId.replace(/^"(.*)"$/, '$1');         
+        }
+        // Make a POST request to add the new crop
+        const apiUrl = `${backendUrl}/product/createproduct`;
+  
         try {
           const response = await fetch(apiUrl, {
-            method: 'PUT',
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(editedCrop),
+            body: JSON.stringify(newCrop),
           });
-    
+          
+ 
           if (response.ok) {
-            setCrops(updatedCrops);
-            setEditIndex(null);
-            setCropName("");
-            setQuantity("");
-          } else {
-            console.error('Failed to save edited crop.');
-          }
-        } catch (error) {
-          console.error('Error saving edited crop:', error);
-        }
-      };
-
-      const handleSubmit = async () => {
-       
-        if (cropName && quantity) {
-          const newCrop = {
-            name: cropName,
-            quantity: quantity,
-            warehouseId: warehouseId,
-          };
-          console.log(cropName);
-    
-          // Make a POST request to add the new crop
-          const apiUrl = 'YOUR_API_URL';
-    
-          try {
-            const response = await fetch(apiUrl, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(newCrop),
+            toast({
+              title: "",
+              description: "crop is added",
             });
-    
-            if (response.ok) {
-              setCrops((prevCrops) => [...prevCrops, newCrop]);
-              setCropName("");
-              setQuantity("");
-            } else {
-              console.error('Failed to add new crop.');
-            }
-          } catch (error) {
-            console.error('Error adding new crop:', error);
-          }
-        }
-      };
-      const handleDeleteCrop2 = async (index) => {
-        const deletedCrop = crops[index];
-        const options={
-            name:deletedCrop.name,
-            warehouseId:warehouseId
-        }
-    
-        // Make a DELETE request to remove the crop
-        const apiUrl = `YOUR_API_URL/crops/delete`;
-    
-        try {
-          const response = await fetch(apiUrl, {
-            method: 'DELETE',
-            body: JSON.stringify(options),
-          });
-    
-          if (response.ok) {
-            const updatedCrops = [...crops];
-            updatedCrops.splice(index, 1);
-            setCrops(updatedCrops);
-            setEditIndex(null);
-            setCropName("");
-            setQuantity("");
+            // setCrops((prevCrops) => [...prevCrops, newCrop]);
+            // setCropName("");
+            // setQuantity("");
+            // setSunlight("0");
+            // setPesticide("0");
+            // setMoisture("");
+            // setTemperature("");
           } else {
-            console.error('Failed to delete crop.');
+            console.error('Failed to add new crop.');
           }
         } catch (error) {
-          console.error('Error deleting crop:', error);
+          console.error('Error adding new crop:', error);
         }
-      };
-  
-      const handleAddCrop = () => {
-        if (cropName && quantity) {
-          const newCrop = {
-            name: cropName,
-            quantity: quantity,
-          };
-         
-          // Update the available crops after adding a new crop
-          setAvailableCrops((prevAvailableCrops) =>
-            prevAvailableCrops.filter((crop) => crop !== cropName)
-          );
-      
-          // Add the new crop to the state
-          setCrops((prevCrops) => [...prevCrops, newCrop]);
-      
-          // Reset the input fields
-          setCropName(""); // Set the default value to "Rice"
-          setQuantity("");
-        }
-      };
-      
-  
-    const handleEditCrop = (index) => {
-      setEditIndex(index);
-      setCropName(crops[index].name);
-      setQuantity(crops[index].quantity);
-    };
-  
-    const handleSaveCrop = (index) => {
-      const updatedCrops = [...crops];
-      updatedCrops[index].name = cropName;
-      updatedCrops[index].quantity = quantity;
-      setCrops(updatedCrops);
-      setEditIndex(null);
-      setCropName("");
-      setQuantity("");
-    };
-  
-    const handleDeleteCrop = (index) => {
-        const deletedCrop = crops[index];
-      const updatedCrops = [...crops];
-      setAvailableCrops((prevAvailableCrops) => [...prevAvailableCrops, deletedCrop.name]);
-
-      updatedCrops.splice(index, 1);
-      setCrops(updatedCrops);
-      setEditIndex(null);
-      setCropName("");
-      setQuantity("");
-    };
-  
-    const handleIncreaseQuantity = () => {
-      setQuantity((prevQuantity) => String(Number(prevQuantity) + 1));
-    };
-  
-    const handleDecreaseQuantity = () => {
-      if (Number(quantity) > 0) {
-        setQuantity((prevQuantity) => String(Number(prevQuantity) - 1));
       }
     };
+
   
     return (
       <>
-         <div className="flex flex-col bg-black  gap-4 justify-center h-screen items-center">
-         <h1 className=" text-white text-4xl mb-4 ">Add Your Crops</h1>
-  <div className="flex flex-row justify-around items-center ">
-    {availableCrops.length > 0 && (
-      <Card style={{ width: "300px" }}>
-        <CardHeader>
-          <CardTitle>Add Crop</CardTitle>
-          <CardDescription>Enter crop details</CardDescription>
+       <div className="flex items-center justify-center h-screen bg-gray-100">
+      <Card className="w-96 p-6 border border-gray-300 shadow-md bg-white rounded-md">
+        <CardHeader className="border-b pb-2 mb-4">
+          <CardTitle className="text-lg font-semibold text-gray-800">Crop Input Form</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col gap-4">
-            <label className="flex flex-row gap-4 items-center justify-center">
-              <p>Warehouse Name: {warehouseName}</p>
-            </label>
-            <label className="flex flex-row gap-4 items-center justify-center">
-              <p>Crop Name</p>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex flex-col">
+              <label htmlFor="warehouse" className="mb-1 text-sm font-medium text-gray-700">
+                Warehouses:
+              </label>
               <select
-                value={cropName}
-                onChange={(e) => setCropName(e.target.value)}
-                className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
+                id="warehouse"
+             
+                value={warehouseId}
+                onChange={(e) => setWarehouseId(e.target.value)}
+                className="py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               >
-                {availableCrops.map((crop) => (
-                  <option key={crop} value={crop}>
-                    {crop}
+                <option value="" disabled>
+                  Select Warehouse
+                </option>
+                {availableWarehouse.map((warehouse,index) => (
+                  <option key={index} value={warehouse._id}>
+                    {warehouse.name}
                   </option>
                 ))}
               </select>
-            </label>
-            <label className="flex flex-row gap-4 items-center justify-center">
-              <p>Quantity</p>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleDecreaseQuantity}
-                  className="font-semibold bg-red-500 text-white p-2 rounded-md"
-                >
-                  -
-                </button>
-                <input
-                  type="text"
-                  value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
-                  placeholder="Enter quantity"
-                  className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
-                />
-                <button
-                  type="button"
-                  onClick={handleIncreaseQuantity}
-                  className="font-semibold bg-green-500 text-white p-2 rounded-md"
-                >
-                  +
-                </button>
+            </div>
+
+            <div className="flex flex-col">
+              <label htmlFor="cropName" className="mb-1 text-sm font-medium text-gray-700">
+                Crop Name:
+              </label>
+              <input
+                type="text"
+                id="cropName"
+                value={cropName}
+                onChange={(e) => setCropName(e.target.value)}
+                className="py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label htmlFor="quantity" className="mb-1 text-sm font-medium text-gray-700">
+                Quantity:
+              </label>
+              <input
+                type="number"
+                id="quantity"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                className="py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label className="mb-1 text-sm font-medium text-gray-700">Sunlight:</label>
+              <div className="flex space-x-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="2"
+                    checked={sunlight === "2"}
+                    onChange={() => setSunlight("2")}
+                    className="form-radio h-4 w-4 text-blue-500"
+                  />
+                  <span className="ml-2">High</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="1"
+                    checked={sunlight === "1"}
+                    onChange={() => setSunlight("1")}
+                    className="form-radio h-4 w-4 text-blue-500"
+                  />
+                  <span className="ml-2">Medium</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="0"
+                    checked={sunlight === "0"}
+                    onChange={() => setSunlight("0")}
+                    className="form-radio h-4 w-4 text-blue-500"
+                  />
+                  <span className="ml-2">Low</span>
+                </label>
               </div>
-            </label>
-            {editIndex === null ? (
-              <button
-                type="button"
-                onClick={handleSubmit}
-                className="font-semibold bg-green-500 text-white p-2 rounded-md"
-              >
-                Add Crop
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => handleSaveCrop(editIndex)}
-                className="font-semibold bg-blue-500 text-white p-2 rounded-md"
-              >
-                Save Crop
-              </button>
-            )}
-          </div>
+            </div>
+
+            <div className="flex flex-col">
+              <label className="mb-1 text-sm font-medium text-gray-700">Pesticide:</label>
+              <div className="flex space-x-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="1"
+                    checked={pesticide === "1"}
+                    onChange={() => setPesticide("1")}
+                    className="form-radio h-4 w-4 text-blue-500"
+                  />
+                  <span className="ml-2">Yes</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="0"
+                    checked={pesticide === "0"}
+                    onChange={() => setPesticide("0")}
+                    className="form-radio h-4 w-4 text-blue-500"
+                  />
+                  <span className="ml-2">No</span>
+                </label>
+              </div>
+            </div>  
+
+            <button
+              type="submit"
+              className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
+
+            >
+              Add Crop
+            </button>
+          </form>
         </CardContent>
       </Card>
-    )}
-
-    {/* Existing Cards */}
-    <div className="flex flex-col gap-4">
-       
-      {
-        crops.length?(
-            crops.map((crop, index) => (
-                <Card key={index} className="flex-1 max-w-[400px]">
-                  <CardHeader>
-                    {editIndex === index ? (
-                      <>
-                        <CardTitle>
-                          <input
-                            type="text"
-                            value={cropName}
-                            onChange={(e) => setCropName(e.target.value)}
-                            placeholder="Enter crop name"
-                            className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
-                          />
-                        </CardTitle>
-                        <CardDescription>
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={handleDecreaseQuantity}
-                              className="font-semibold bg-red-500 text-white p-2 rounded-md"
-                            >
-                              -
-                            </button>
-                            <input
-                              type="text"
-                              value={quantity}
-                              onChange={(e) => setQuantity(e.target.value)}
-                              placeholder="Enter quantity"
-                              className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
-                            />
-                            <button
-                              type="button"
-                              onClick={handleIncreaseQuantity}
-                              className="font-semibold bg-green-500 text-white p-2 rounded-md"
-                            >
-                              +
-                            </button>
-                          </div>
-                        </CardDescription>
-                      </>
-                    ) : (
-                      <>
-                        <CardTitle>Crop Name: {crop.name}</CardTitle>
-                        <CardDescription>Quantity: {crop.quantity}</CardDescription>
-                      </>
-                    )}
-                  </CardHeader>
-                  <CardFooter>
-                    <div className="flex justify-end gap-2">
-                      {editIndex === index ? (
-                        <>
-                          <button
-                            type="button"
-                            onClick={() => handleSaveCrop(index)}
-                            className="font-semibold bg-blue-500 text-white p-2 rounded-md"
-                          >
-                            Save
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setEditIndex(null)}
-                            className="font-semibold bg-gray-500 text-white p-2 rounded-md"
-                          >
-                            Cancel
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <button
-                            type="button"
-                            onClick={() => handleEditCrop(index)}
-                            className="font-semibold bg-yellow-500 text-white p-2 rounded-md"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteCrop(index)}
-                            className="font-semibold bg-red-500 text-white p-2 rounded-md"
-                          >
-                            Delete
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </CardFooter>
-                </Card>
-              ))
-        ):(
-            <>
-            
-            </>
-        )
-      }
     </div>
-  </div>
-</div>
-
       </>
     );
   };

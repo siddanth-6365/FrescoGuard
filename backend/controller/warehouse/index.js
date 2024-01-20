@@ -15,18 +15,11 @@ module.exports.createWarehouse = async (req, res) => {
 
 
 module.exports.getAllWarehouses = async (req, res) => {
-    const token = req.signedCookies.jwt;
+    const { id } = req.params;
+    const warehouses = await Warehouse.find({ user: id }).populate('products');
+    res.status(200).json(warehouses);
 
-    if (!token) {
-        return res.status(401).json({ error: 'Unauthorized - Missing token' });
-    }
+        // const warehouses = await Warehouse.find({ user: userId}).populate('products');
+        // res.status(200).json(warehouses);
 
-    try {
-        const decodedToken = jwt.verify(token, 'your-secret-key');  // Replace with your actual secret key
-        const userId = decodedToken.userID;
-        const warehouses = await Warehouse.find({ user: userId}).populate('products');
-        res.status(200).json(warehouses);
-    } catch (error) {
-        return res.status(401).json({ error: 'Unauthorized - Invalid token' });
-    }
 };

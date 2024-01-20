@@ -11,7 +11,7 @@ router.route("/createwarehouse")
 router.route("/getwarehouse/:id")
     .get(catchAsync(warehouse.getWarehouse))
 
-router.route("/getallwarehouses")
+router.route("/getallwarehouses/:id")
     .get(catchAsync(warehouse.getAllWarehouses))
     
 

@@ -92,7 +92,7 @@ const WarehouseInput = () => {
           const data = await response.json();
           console.log("Warehouse creation successful. Received data:", data);
 
-          router.push('/CropInput');
+          router.push('/dashboard');
         } else {
           console.error("Warehouse creation failed. Status:", response.status);
         }
