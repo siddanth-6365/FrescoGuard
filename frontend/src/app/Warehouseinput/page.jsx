@@ -1,6 +1,7 @@
 "use client"
 import React, { useState } from "react";
 import { useToast } from "@/components/ui/use-toast"
+import { FaChevronLeft } from "react-icons/fa";
 
 import {
   Card,
@@ -134,6 +135,7 @@ const WarehouseInput = () => {
   return (
     <>
       <div className="flex bg-black flex-col gap-4 justify-center h-screen items-center">
+        <Link className=" text-xl text-yellow-300 p-2 rounded-lg " href={"/dashboard"}><div className=" flex justify-center items-center gap-2"><FaChevronLeft /><p>Go Back To Dashboard</p></div></Link>
         <h1 className=" text-white text-4xl mb-4 ">Build YOUR Warehouse</h1>
         <div>
           <Card>

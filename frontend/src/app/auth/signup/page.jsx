@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -75,7 +76,9 @@ export default function SignUpForm() {
   };
 
   return (
-    <div className="relative flex flex-col justify-center items-center min-h-screen overflow-hidden">
+    <div className="relative flex bg-black flex-col justify-center items-center min-h-screen overflow-hidden">
+       <div className=" font-bold mt-4 text-2xl text-yellow-300"><Link href={"/"}>Home</Link></div>
+     
       <div className="w-full m-auto bg-white lg:max-w-lg">
         <Card>
           <CardHeader className="space-y-1">
@@ -133,10 +136,10 @@ export default function SignUpForm() {
             <Button className="w-full" onClick={handleSubmit}>
               Sign Up
             </Button>
-            <p className="mt-2 text-xs text-center text-gray-700">
+            <Link href={"/auth/login"}><p className="mt-2 text-xs text-center text-gray-700">
               Already have an account?{" "}
               <span className=" text-blue-600 hover:underline">Sign In</span>
-            </p>
+            </p></Link>
           </CardFooter>
         </Card>
       </div>
