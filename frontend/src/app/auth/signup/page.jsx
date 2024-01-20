@@ -37,14 +37,15 @@ export default function SignUpForm() {
   };
 
   const handleTypeChange = (selectedType) => {
-    console.log("called :", selectedType);
+
     handleInputChange("type", selectedType);
   };
 
   const handleSubmit = async () => {
-    console.log(formData);
+
     try {
-      const response = await fetch("/api/user/createuser", {
+      const backendUrl = process.env.BACKEND_URL;
+      const response = await fetch(`${backendUrl}/user/createuser`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
