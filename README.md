@@ -23,7 +23,7 @@ In a world grappling with the challenges of food waste, Fresco Guard stands out 
 # Team Skyshots
 ## Members
 1. Kartik Aggarwal - Team Leader
-    - **Role**: Full Stack Developer
+    - **Role**: Full Stack & Machine Learning Developer 
     - **GitHub**: [github.com/Xaverick](https://github.com/Xaverick)
 
 2. Yash Agarwal
