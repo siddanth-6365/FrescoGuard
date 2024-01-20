@@ -5,8 +5,8 @@ import Chart from "../../components/ui/dashboard/chart/chart";
 import styles from "../../components/ui/dashboard/dashboard.module.css";
 import Rightbar from "../../components/ui/dashboard/rightbar/rightbar";
 import PercentageDonutChart from "../../components/ui/dashboard/donut/index";
-
 import Select from "react-select";
+import { cards } from "./dummyData";
 
 const chartsData = [
   {
@@ -53,145 +53,147 @@ const chartsData = [
   },
 ];
 
-const cards = [
-  {
-    warehouse: "warehouse-1",
-    crop: "wheat",
-    params: [
-      {
-        id: 1,
-        title: "Temperature",
-        number: 20,
-        change: 20,
-      },
-      {
-        id: 2,
-        title: "Humidity",
-        number: 20,
-        change: 2,
-      },
-      {
-        id: 3,
-        title: "Oxygen",
-        number: 20,
-        change: -12,
-      },
-    ],
-  },
-  {
-    warehouse: "warehouse-1",
-    crop: "corn",
-    params: [
-      {
-        id: 1,
-        title: "Temperature",
-        number: 21,
-        change: 3,
-      },
-      {
-        id: 2,
-        title: "Humidity",
-        number: 324,
-        change: -10,
-      },
-      {
-        id: 3,
-        title: "Ventilation",
-        number: 20,
-        change: 40,
-      },
-    ],
-  },
-  {
-    warehouse: "warehouse-2",
-    crop: "wheat",
-    params: [
-      {
-        id: 1,
-        title: "Temperature",
-        number: 20,
-        change: 0,
-      },
-      {
-        id: 2,
-        title: "Humidity",
-        number: 20,
-        change: 0,
-      },
-      {
-        id: 3,
-        title: "Ventilation",
-        number: 20,
-        change: 0,
-      },
-    ],
-  },
-];
+const getWarehousesItems = (warehouse) => {
+  const uniqueValues = [...new Set(warehouse)];
+  return uniqueValues.map((item) => ({
+    value: item.name,
+    label: item.name,
+  }));
+};
 
-const donutdata = [
-  {
-    label: "Spoilage",
-    value: 25,
-  },
-];
+const getProductsByWarehouse = (selectedWarehouse, data) => {
+  console.log("selectedWarehouse :", selectedWarehouse);
+  console.log("data :", data);
+  const targetWarehouse = data.filter((warehouse) => { if(warehouse.name === selectedWarehouse) return warehouse });
+  
+  console.log("targetWarehouse :", targetWarehouse)
+  return targetWarehouse;
+};
 
-const WarehouseItems = [
-  { value: "warehouse-1", label: "Warehouse-1" },
-  { value: "warehouse-2", label: "Warehouse-2" },
-];
 const CropItems = [
   { value: "wheat", label: "Wheat" },
   { value: "rice", label: "Rice" },
   { value: "corn", label: "Corn" },
 ];
+const getpropitems = (selectedCrop) => {
+  const uniqueValues = [...new Set(selectedCrop)];
+  return uniqueValues.map((item) => ({
+    value: item.crop,
+    label: item.crop,
+  }));
+};
 
 const Dashboard = () => {
-  const [selectedWarehouse, setSelectedWarehouse] = useState(
-    WarehouseItems[0].value
-  );
-  const [selectedCrop, setSelectedCrop] = useState(CropItems[0].value);
+  const [selectedWarehouse, setSelectedWarehouse] = useState();
+  const [availableWarehouse, setAvailableWarehouse] = useState([]);
+  const [selectedCrop, setSelectedCrop] = useState("wheat");
+  const [data, setData] = useState([]);
   const [dynamicCards, setDynamicCards] = useState([]);
   const [dynamicChart, setDynamicChart] = useState(chartsData);
+  const [modelPrediction, setModelPrediction] = useState({
+    spoilagePercentage: 0,
+    lifeSpanPercentage: 0,
+  });
 
   const handleWarehouseChange = (warehouse) => {
     setSelectedWarehouse(warehouse.value);
   };
 
   const handleCropChange = (crop) => {
-    console.log(crop);
     setSelectedCrop(crop.value);
   };
 
+  // useEffect(async () => {
+  //   try {
+  //     const res = await fetch("http://localhost:5000/dashboard/model", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         // Construct payload with constant and updated params
+  //         ...selectedCrop, // Assuming you have selected crop data
+  //         temperature: temperature,
+  //         humidity: humidity,
+  //         oxygen: oxygen,
+  //       }),
+  //     });
+  //     const prediction = await res.json();
+  //     setModelPrediction(prediction);
+  //   } catch (error) {
+  //     console.error("API call error:", error);
+  //   }
+  // }, [selectedCrop]);
+
+  // useEffect(() => {
+  //   // Filter cards based on selected warehouse and crop
+  //   const filteredCards = cards
+  //     .filter(
+  //       (item) =>
+  //         item.crop.toLowerCase() === selectedCrop?.toLowerCase() 
+  //     )
+  //     .flatMap((item) => item.params);
+  //   //  const filteredCards = cards.flatMap((item) => item.params);
+
+  //   console.log("card :", filteredCards);
+  //   setDynamicCards(filteredCards);
+
+  //   // const filteredChart = chartsData.filter(
+  //   //   (data) => data.name.toLowerCase() === selectedWarehouse?.toLowerCase()
+  //   // );
+  //   // setDynamicChart(filteredChart);
+  // }, [selectedWarehouse, selectedCrop]);
+
   useEffect(() => {
-    // Filter cards based on selected warehouse and crop
-    const filteredCards = cards
-      .filter(
-        (item) =>
-          item.crop.toLowerCase() === selectedCrop?.toLowerCase() &&
-          item.warehouse.toLowerCase() === selectedWarehouse?.toLowerCase()
-      )
-      .flatMap((item) => item.params);
-    console.log("card :", filteredCards);
-    setDynamicCards(filteredCards);
+    const getWarehouse = async () => {
+      const backendUrl = process.env.BACKEND_URL;
+      let userId = localStorage.getItem("userId");
 
-    // const filteredChart = chartsData.filter(
-    //   (data) => data.name.toLowerCase() === selectedWarehouse?.toLowerCase()
-    // );
-    // setDynamicChart(filteredChart);
-  }, [selectedWarehouse, selectedCrop]);
+      if (userId && typeof userId === "string") {
+        userId = userId.replace(/^"(.*)"$/, "$1");
+      }
+      console.log(userId);
+      const apiUrl = `${backendUrl}/warehouse/getallwarehouses/${userId}`;
 
+      try {
+        const response = await fetch(apiUrl);
+        if (response.ok) {
+          const dataa = await response.json();
+          setData(dataa);
+          const warehouses = getWarehousesItems(dataa);
+          setAvailableWarehouse(warehouses);
+        } else {
+          console.error("Failed to fetch crops data.");
+        }
+      } catch (error) {
+        console.error("Error fetching crops data:", error);
+      }
+    };
+    getWarehouse();
+  }, []);
+
+  useEffect(() => {
+    const cropsitems = getProductsByWarehouse(selectedWarehouse,data);
+    console.log(data);
+    setSelectedCrop(cropsitems);
+  }, [selectedWarehouse]);
+
+  
+  
+  console.log("cropsitems :", selectedCrop);
   return (
     <div className={styles.wrapper}>
       <div className={styles.main}>
         <div className="flex gap-6">
           <Select
-            options={WarehouseItems}
-            value={selectedWarehouse}
+            options={availableWarehouse}
+   
             onChange={handleWarehouseChange}
           />
           <Select
-            options={CropItems}
-            value={selectedCrop}
+            options={getpropitems(selectedCrop.products)}
+            value={{
+              value: selectedCrop.products,
+              label: selectedCrop.products
+            }}
             onChange={handleCropChange}
           />
         </div>
@@ -208,12 +210,12 @@ const Dashboard = () => {
         </div>
         <div className="flex gap-4 max-w-[900px] mb-[-70px] mt-[-70px]">
           <PercentageDonutChart
-            percentage={70}
+            percentage={modelPrediction.spoilagePercentage}
             label1={"Spoilage"}
             style={{ height: "250px", width: "250px" }}
           />
           <PercentageDonutChart
-            percentage={50}
+            percentage={modelPrediction.lifeSpanPercentage}
             label1={"life Span"}
             style={{ height: "250px", width: "250px" }}
           />
