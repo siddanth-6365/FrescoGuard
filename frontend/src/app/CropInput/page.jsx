@@ -38,7 +38,13 @@ const CropInput = () => {
     useEffect(() => {
         // Fetch crops data for the warehouse ID
         const fetchCrops = async () => {
-          const apiUrl = `YOUR_API_URL/crops?warehouseId=${warehouseId}`;
+          const backendUrl = process.env.BACKEND_URL;
+          let userId = localStorage.getItem("userId");
+
+          if (userId && typeof userId === 'string') {
+            userId = userId.replace(/^"(.*)"$/, '$1');         
+          }
+          const apiUrl = `${backendUrl}/warehouse/`;
     
           try {
             const response = await fetch(apiUrl);

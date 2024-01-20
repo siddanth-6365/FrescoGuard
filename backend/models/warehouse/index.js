@@ -19,7 +19,7 @@ const WarehouseSchema = new mongoose.Schema({
     },
 
     capacity: {
-        type: Number,
+        type: String,
         required: true,
     },
     

@@ -19,7 +19,7 @@ db.once('open', () => console.log('Connected to database'));
 
 
 app.use(cors({ origin: "*", credentials: true}));
-app.use (cookieParser(process.env.JWT_SECRET ));
+app.use (cookieParser(process.env.JWT_SECRET));
 app.use(express.json());
 
 const userRouter = require("./routes/user");

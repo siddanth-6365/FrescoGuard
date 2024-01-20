@@ -43,6 +43,8 @@ export default function SignUpForm() {
       if (response.ok) {
         const data = await response.json();
         console.log("Login successful. Received data:", data);
+        localStorage.setItem("token", )
+        localStorage.setItem("userId", JSON.stringify(data.user._id))
       } else {
         console.error("Login failed. Status:", response.status);
       }
