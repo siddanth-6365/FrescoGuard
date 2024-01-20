@@ -64,7 +64,7 @@ const CropInput = () => {
       e.preventDefault();
       if (cropName && quantity) {
         const newCrop = {
-          name: cropName,
+          crop: cropName,
           quantity: quantity,
           sunlight: sunlight,
           pesticide: pesticide,
@@ -116,7 +116,7 @@ const CropInput = () => {
   
     return (
       <>
-       <div className="flex items-center justify-center h-screen bg-gray-100">
+       <div className="flex items-center justify-center h-screen bg-black">
       <Card className="w-96 p-6 border border-gray-300 shadow-md bg-white rounded-md">
         <CardHeader className="border-b pb-2 mb-4">
           <CardTitle className="text-lg font-semibold text-gray-800">Crop Input Form</CardTitle>
