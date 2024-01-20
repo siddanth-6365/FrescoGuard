@@ -1,10 +1,26 @@
-import { MdSupervisedUserCircle } from "react-icons/md";
+// import { MdSupervisedUserCircle,MdLocalFireStation } from "react-icons/md";
+import { FaTemperatureHigh } from "react-icons/fa";
+import { SiOxygen } from "react-icons/si";
+import { WiHumidity } from "react-icons/wi";
 import styles from "./card.module.css";
 
-const Card = ({ item }) => {
+const CardIcons = {
+  Temperature: FaTemperatureHigh,
+  Humidity: WiHumidity,
+  Oxygen: SiOxygen,
+};
+
+const Card = ({ item, colorTheme }) => {
+  const IconComponent = CardIcons[item.title]; // Select icon dynamically based on item.title
+
+  if (!IconComponent) {
+    // Handle the case where the icon is not found
+    return null;
+  }
+
   return (
-    <div className={styles.container}>
-      <MdSupervisedUserCircle size={24} />
+    <div className={`${styles.container} ${styles[colorTheme]}`}>
+      <IconComponent size={24} />
       <div className={styles.texts}>
         <span className={styles.title}>{item.title}</span>
         <span className={styles.number}>{item.number}</span>
