@@ -30,19 +30,8 @@ const createUser = async (req, res) => {
     // Save user to the database
     const savedUser = await newUser.save();
 
-    // Generate JWT token
-    const token = jwt.sign({ userId: savedUser._id }, JWT_SECRET, {
-      expiresIn: "1h",
-    });
 
-    // Set token as a cookie
-    res.setHeader(
-      "Set-Cookie",
-      `token=${token}; HttpOnly; Path=/; Max-Age=${60 * 60}; SameSite=Strict`
-    );
-
-    // Respond with user data
-    res.status(201).json({ user: savedUser });
+    res.status(201).json("User created successfully");
   } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -68,10 +57,7 @@ const loginUser = async (req, res) => {
       expiresIn: "1h",
     });
 
-    res.setHeader(
-      "Set-Cookie",
-      `token=${token}; HttpOnly; Path=/; Max-Age=${60 * 60}; SameSite=Strict`
-    );
+    res.cookie("token", token, {user: user._id, httpOnly: true, maxAge: 60 * 60 * 1000});
 
     res.status(200).json({ user });
   } catch (error) {

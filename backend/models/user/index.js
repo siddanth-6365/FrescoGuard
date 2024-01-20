@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Warehouse = require("../warehouse");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -21,6 +22,13 @@ const userSchema = new mongoose.Schema({
     enum: ["producer", "retailer"],
     required: true,
   },
+
+  warehouses: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Warehouse",
+    },
+  ],
 });
 
 const UserModel = mongoose.model("User", userSchema);
