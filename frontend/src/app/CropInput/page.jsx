@@ -214,8 +214,9 @@ const CropInput = () => {
   
     return (
       <>
-         <div className="flex flex-col gap-4 justify-center h-screen items-center">
-  <div className="flex flex-row justify-around items-center gap-[100px]">
+         <div className="flex flex-col bg-black  gap-4 justify-center h-screen items-center">
+         <h1 className=" text-white text-4xl mb-4 ">Add Your Crops</h1>
+  <div className="flex flex-row justify-around items-center ">
     {availableCrops.length > 0 && (
       <Card style={{ width: "300px" }}>
         <CardHeader>
@@ -291,94 +292,103 @@ const CropInput = () => {
 
     {/* Existing Cards */}
     <div className="flex flex-col gap-4">
-      {crops.map((crop, index) => (
-        <Card key={index} className="flex-1 max-w-[400px]">
-          <CardHeader>
-            {editIndex === index ? (
-              <>
-                <CardTitle>
-                  <input
-                    type="text"
-                    value={cropName}
-                    onChange={(e) => setCropName(e.target.value)}
-                    placeholder="Enter crop name"
-                    className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
-                  />
-                </CardTitle>
-                <CardDescription>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={handleDecreaseQuantity}
-                      className="font-semibold bg-red-500 text-white p-2 rounded-md"
-                    >
-                      -
-                    </button>
-                    <input
-                      type="text"
-                      value={quantity}
-                      onChange={(e) => setQuantity(e.target.value)}
-                      placeholder="Enter quantity"
-                      className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleIncreaseQuantity}
-                      className="font-semibold bg-green-500 text-white p-2 rounded-md"
-                    >
-                      +
-                    </button>
-                  </div>
-                </CardDescription>
-              </>
-            ) : (
-              <>
-                <CardTitle>Crop Name: {crop.name}</CardTitle>
-                <CardDescription>Quantity: {crop.quantity}</CardDescription>
-              </>
-            )}
-          </CardHeader>
-          <CardFooter>
-            <div className="flex justify-end gap-2">
-              {editIndex === index ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => handleSaveCrop(index)}
-                    className="font-semibold bg-blue-500 text-white p-2 rounded-md"
-                  >
-                    Save
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEditIndex(null)}
-                    className="font-semibold bg-gray-500 text-white p-2 rounded-md"
-                  >
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => handleEditCrop(index)}
-                    className="font-semibold bg-yellow-500 text-white p-2 rounded-md"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteCrop(index)}
-                    className="font-semibold bg-red-500 text-white p-2 rounded-md"
-                  >
-                    Delete
-                  </button>
-                </>
-              )}
-            </div>
-          </CardFooter>
-        </Card>
-      ))}
+       
+      {
+        crops.length?(
+            crops.map((crop, index) => (
+                <Card key={index} className="flex-1 max-w-[400px]">
+                  <CardHeader>
+                    {editIndex === index ? (
+                      <>
+                        <CardTitle>
+                          <input
+                            type="text"
+                            value={cropName}
+                            onChange={(e) => setCropName(e.target.value)}
+                            placeholder="Enter crop name"
+                            className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
+                          />
+                        </CardTitle>
+                        <CardDescription>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={handleDecreaseQuantity}
+                              className="font-semibold bg-red-500 text-white p-2 rounded-md"
+                            >
+                              -
+                            </button>
+                            <input
+                              type="text"
+                              value={quantity}
+                              onChange={(e) => setQuantity(e.target.value)}
+                              placeholder="Enter quantity"
+                              className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
+                            />
+                            <button
+                              type="button"
+                              onClick={handleIncreaseQuantity}
+                              className="font-semibold bg-green-500 text-white p-2 rounded-md"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </CardDescription>
+                      </>
+                    ) : (
+                      <>
+                        <CardTitle>Crop Name: {crop.name}</CardTitle>
+                        <CardDescription>Quantity: {crop.quantity}</CardDescription>
+                      </>
+                    )}
+                  </CardHeader>
+                  <CardFooter>
+                    <div className="flex justify-end gap-2">
+                      {editIndex === index ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleSaveCrop(index)}
+                            className="font-semibold bg-blue-500 text-white p-2 rounded-md"
+                          >
+                            Save
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setEditIndex(null)}
+                            className="font-semibold bg-gray-500 text-white p-2 rounded-md"
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleEditCrop(index)}
+                            className="font-semibold bg-yellow-500 text-white p-2 rounded-md"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteCrop(index)}
+                            className="font-semibold bg-red-500 text-white p-2 rounded-md"
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </CardFooter>
+                </Card>
+              ))
+        ):(
+            <>
+            
+            </>
+        )
+      }
     </div>
   </div>
 </div>

@@ -131,7 +131,8 @@ const WarehouseInput = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-4 justify-center h-screen items-center">
+      <div className="flex bg-black flex-col gap-4 justify-center h-screen items-center">
+        <h1 className=" text-white text-4xl mb-4 ">Build YOUR Warehouse</h1>
         <div>
           <Card>
             <CardHeader>
