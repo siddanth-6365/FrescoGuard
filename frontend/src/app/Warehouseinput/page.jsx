@@ -11,37 +11,53 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useWarehouseContext } from "@/components/contextapi/WarehouseContext";
 
 const WarehouseInput = () => {
   const [formData, setFormData] = useState({
     name: "",
     location: "",
-    moisture: "",
-    oxygen: "",
     sunlight: "",
     pesticides: "",
-    temperature: "",
+
   });
+  const { state, dispatch } = useWarehouseContext();
   const { toast } = useToast();
-  const handleNavigate=(e)=>{
-    if (validateForm()) {
+//   const handleNavigate= async (e)=>{
+//     if (validateForm()) {
+//         try {
+//             dispatch({ type: "ADD_WAREHOUSE", payload: formData });
+
+//             const response = await fetch("http://localhost:5000/warehouse/createwarehouse", {
+//               method: "POST",
+//               headers: {
+//                 "Content-Type": "application/json",
+//               },
+//               body: JSON.stringify(formData),
+//             });
+      
+//             if (response.ok) {
+//               const data = await response.json();
+//               console.log("Login successful. Received data:", data);
+//             } else {
+//               console.error("Login failed. Status:", response.status);
+//             }
+//           } catch (error) {
+//             console.error("Error during login:", error);
+//           }
         
-        
-        // Print form data in console
-        console.log(formData);
-  
-        // Navigate to the next page
-        // Replace the Link component with the actual navigation logic you are using
-        // For example, if you are using the next/router, you can use router.push("/CropInput")
-      } else {
-        e.preventDefault();
-        console.log("Please fill in all required fields.");
-        toast({
-            title: "",
-            description: "Please fill in all required fields.",
-          })
-      }
-  }
+//         dispatch({ type: "ADD_WAREHOUSE", payload: formData });
+//         console.log(formData);
+       
+//       } else {
+//         e.preventDefault();
+//         console.log("Please fill in all required fields.");
+//         toast({
+//             title: "",
+//             description: "Please fill in all required fields.",
+//           })
+//       }
+//   }
   const handleOnChange = (e) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -49,34 +65,58 @@ const WarehouseInput = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const  handleSubmit  = async (e) => {
+   
 
-    // Validate form data
     if (validateForm()) {
-      // Print form data in console
-      console.log(formData);
+      try {
+        dispatch({ type: "ADD_WAREHOUSE", payload: formData });
 
-      // Navigate to the next page
-      // Replace the Link component with the actual navigation logic you are using
-      // For example, if you are using the next/router, you can use router.push("/CropInput")
+        const response = await fetch("http://localhost:5000/warehouse/createwarehouse", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Warehouse creation successful. Received data:", data);
+
+          // Use the router to navigate to the next page
+          router.push('/CropInput');
+        } else {
+          console.error("Warehouse creation failed. Status:", response.status);
+        }
+      } catch (error) {
+        console.error("Error during warehouse creation:", error);
+      }
     } else {
+        e.preventDefault();
       console.log("Please fill in all required fields.");
+      toast({
+        title: "",
+        description: "Please fill in all required fields.",
+      });
     }
   };
 
   const validateForm = () => {
     // Add your form validation logic here
     // For example, check if all required fields are filled
-    return (
-      formData.name &&
-      formData.location &&
-      formData.moisture &&
-      formData.oxygen &&
-      formData.sunlight &&
-      formData.pesticides !== "" &&
-      formData.temperature
-    );
+    if(!formData.name &&
+        !formData.location &&
+        !formData.sunlight &&
+        !formData.pesticides ){
+            return false;
+        }
+        else{
+            return true;
+        }
+      
+     
+    
   };
 
   const {
@@ -141,58 +181,35 @@ const WarehouseInput = () => {
                       />
                     </label>
                   </div>
+                  
+                  
                   <div>
-                    <label className="flex flex-row gap-4 items-center justify-center">
-                      <p className="">Moisture</p>
-                      <input
-                        required
-                        type="text"
-                        name="moisture"
-                        value={moisture}
-                        onChange={handleOnChange}
-                        placeholder="Moisture Content"
-                        style={{
-                          boxShadow:
-                            "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
-                        }}
-                        className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
-                      />
-                    </label>
-                  </div>
-                  <div>
-                    <label className="flex flex-row gap-4 items-center justify-center">
-                      <p className="">Oxygen</p>
-                      <input
-                        required
-                        type="text"
-                        name="oxygen"
-                        value={oxygen}
-                        onChange={handleOnChange}
-                        placeholder="Oxygen"
-                        style={{
-                          boxShadow:
-                            "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
-                        }}
-                        className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
-                      />
-                    </label>
-                  </div>
-                  <div>
-                    <label className="flex flex-row gap-4 items-center justify-center">
+                    <label className="flex flex-row gap-4 items-center ">
                       <p className="">Sunlight</p>
                       <input
                         required
-                        type="text"
-                        name="sunlight"
-                        value={sunlight}
+                        type="radio"
+                        name="Sunlight"
+                        value={"High"}
                         onChange={handleOnChange}
-                        placeholder="Sunlight"
-                        style={{
-                          boxShadow:
-                            "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
-                        }}
-                        className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
                       />
+                      <p className="">High</p>
+                      <input
+                        required
+                        type="radio"
+                        name="Sunlight"
+                        value={"Medium"}
+                        onChange={handleOnChange}
+                      />
+                      <p className="">Medium</p>
+                      <input
+                        required
+                        type="radio"
+                        name="Sunlight"
+                        value={"Low"}
+                        onChange={handleOnChange}
+                      />
+                      <p className="">Low</p>
                     </label>
                   </div>
                   <div>
@@ -216,26 +233,9 @@ const WarehouseInput = () => {
                       <p className="">No</p>
                     </label>
                   </div>
-                  <div>
-                    <label className="flex flex-row gap-4 items-center justify-center">
-                      <p className="">Temperature</p>
-                      <input
-                        required
-                        type="text"
-                        name="temperature"
-                        value={temperature}
-                        onChange={handleOnChange}
-                        placeholder="Temperature"
-                        style={{
-                          boxShadow:
-                            "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
-                        }}
-                        className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
-                      />
-                    </label>
-                  </div>
                  
-                  <Link onClick={handleNavigate}  href={"/CropInput"}>
+                 
+                  <Link onClick={handleSubmit}  href={"/CropInput"}>
                   <Button type="submit" variant="outline">
                     Next
                     </Button>
