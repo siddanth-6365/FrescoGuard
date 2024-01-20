@@ -31,6 +31,8 @@ app.use("/warehouse", warehouseRouter);
 const productRouter = require("./routes/products");
 app.use("/product", productRouter);
 
+const alert = require("./routes/alert");  
+app.use("/alert", alert);
 
 
 app.use("/", (req, res) => {
