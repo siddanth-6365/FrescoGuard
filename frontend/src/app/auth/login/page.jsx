@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +16,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function SignUpForm() {
+  const router = useRouter();
+  const [islogin, setIslogin] = useState(false);
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -26,11 +30,16 @@ export default function SignUpForm() {
       [name]: value,
     }));
   };
+  
+  if (islogin) {
+    if (localStorage.getItem("userId")) {
+      router.push("/dashboard");
+    }
+  }
 
   const handleSubmit = async () => {
-    
+    console.log("Submitting form data:", formData);
     try {
-
       const backendUrl = process.env.BACKEND_URL;
       const response = await fetch(`${backendUrl}/user/login`, {
         method: "POST",
@@ -38,13 +47,15 @@ export default function SignUpForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-      });
+      });
 
       if (response.ok) {
         const data = await response.json();
         console.log("Login successful. Received data:", data);
-        // localStorage.setItem("token")
-        localStorage.setItem("userId", JSON.stringify(data.user._id))
+
+        localStorage.setItem("userId", JSON.stringify(data.user._id));
+        setIslogin(true);
+
       } else {
         console.error("Login failed. Status:", response.status);
       }
@@ -59,7 +70,7 @@ export default function SignUpForm() {
         <Card>
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl text-center">
-              Create an account
+              Login to the account
             </CardTitle>
             <CardDescription className="text-center">
               Enter your email and password to sign up
@@ -72,7 +83,7 @@ export default function SignUpForm() {
                 id="email"
                 type="email"
                 placeholder=""
-                onClick={(e) => handleInputChange("email", e.target.value)}
+                onChange={(e) => handleInputChange("email", e.target.value)}
               />
             </div>
             <div className="grid gap-2">
@@ -80,19 +91,19 @@ export default function SignUpForm() {
               <Input
                 id="password"
                 type="password"
-                onClick={(e) => handleInputChange("password", e.target.value)}
+                onChange={(e) => handleInputChange("password", e.target.value)}
               />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col">
             <Button className="w-full" onClick={handleSubmit}>
-             login
+              login
             </Button>
             <p className="mt-2 text-xs text-center text-gray-700">
               need to have an account?{" "}
               <Link href="/auth/signup">
-      <span className="text-blue-600 hover:underline">Sign In</span>
-    </Link>
+                <span className="text-blue-600 hover:underline">Sign up</span>
+              </Link>
             </p>
           </CardFooter>
         </Card>

@@ -1,5 +1,13 @@
+import Hero from "@/components/homepage/Hero/Hero";
+import Intro from "@/components/homepage/Intro/Intro";
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24"></main>
+    <>
+      <div>
+        <Hero />
+        <Intro />
+      </div>
+    </>
   );
 }

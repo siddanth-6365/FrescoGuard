@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import axios from "axios";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -22,12 +22,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function SignUpForm() {
+  const router = useRouter();
+  const [islogin, setIslogin] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     type: "",
   });
+
+  if (islogin) {
+    if (localStorage.getItem("userId")) {
+      router.push("/dashboard");
+    }
+  }
 
   const handleInputChange = (name, value) => {
     setFormData((prevData) => ({
@@ -37,12 +46,10 @@ export default function SignUpForm() {
   };
 
   const handleTypeChange = (selectedType) => {
-
     handleInputChange("type", selectedType);
   };
 
   const handleSubmit = async () => {
-
     try {
       const backendUrl = process.env.BACKEND_URL;
       const response = await fetch(`${backendUrl}/user/createuser`, {
@@ -56,6 +63,8 @@ export default function SignUpForm() {
       if (response.ok) {
         const data = await response.json();
         console.log("User registered successfully:", data.user);
+        localStorage.setItem("userId", JSON.stringify(data.user._id));
+        setIslogin(true);
       } else {
         const errorData = await response.json();
         console.error("Error registering user:", errorData.message);
@@ -93,7 +102,7 @@ export default function SignUpForm() {
                 id="email"
                 type="email"
                 placeholder=""
-                onClick={(e) => handleInputChange("email", e.target.value)}
+                onChange={(e) => handleInputChange("email", e.target.value)}
               />
             </div>
             <div className="grid gap-2">
@@ -101,7 +110,7 @@ export default function SignUpForm() {
               <Input
                 id="password"
                 type="password"
-                onClick={(e) => handleInputChange("password", e.target.value)}
+                onChange={(e) => handleInputChange("password", e.target.value)}
               />
             </div>
             <div className="flex flex-col space-y-1.5">
