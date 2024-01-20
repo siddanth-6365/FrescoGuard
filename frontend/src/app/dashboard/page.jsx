@@ -4,6 +4,8 @@ import Card from "../../components/ui/dashboard/card/card";
 import Chart from "../../components/ui/dashboard/chart/chart";
 import styles from "../../components/ui/dashboard/dashboard.module.css";
 import Rightbar from "../../components/ui/dashboard/rightbar/rightbar";
+import PercentageDonutChart from "../../components/ui/dashboard/donut/index";
+
 import Select from "react-select";
 
 const chartsData = [
@@ -70,7 +72,7 @@ const cards = [
       },
       {
         id: 3,
-        title: "Ventilation",
+        title: "Oxygen",
         number: 20,
         change: -12,
       },
@@ -123,6 +125,13 @@ const cards = [
         change: 0,
       },
     ],
+  },
+];
+
+const donutdata = [
+  {
+    label: "Spoilage",
+    value: 25,
   },
 ];
 
@@ -192,9 +201,24 @@ const Dashboard = () => {
               No Crop Found for this crop and warehouse
             </div>
           ) : (
-            dynamicCards.map((item, i) => <Card item={item} key={i} />)
+            dynamicCards.map((item, i) => (
+              <Card item={item} colorTheme={item.title} key={i} />
+            ))
           )}
         </div>
+        <div className="flex gap-4 max-w-[900px] mb-[-70px] mt-[-70px]">
+          <PercentageDonutChart
+            percentage={70}
+            label1={"Spoilage"}
+            style={{ height: "250px", width: "250px" }}
+          />
+          <PercentageDonutChart
+            percentage={50}
+            label1={"life Span"}
+            style={{ height: "250px", width: "250px" }}
+          />
+        </div>
+
         <Chart data={dynamicChart} />
       </div>
       <div className={styles.side}>
