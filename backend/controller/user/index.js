@@ -56,7 +56,7 @@ const loginUser = async (req, res) => {
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
       expiresIn: "1h",
     });
-
+    console.log(token);
     res.cookie("token", token, {user: user._id, httpOnly: true, maxAge: 60 * 60 * 1000});
 
     res.status(200).json({ user });
@@ -66,7 +66,19 @@ const loginUser = async (req, res) => {
   }
 };
 
+const getUser = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const user = await UserModel.findById(id).populate('warehouses');
+        res.status(200).json(user);
+    } catch (error) {
+        console.error("Error getting user:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
 module.exports = {
   createUser,
   loginUser,
+  getUser,
 };

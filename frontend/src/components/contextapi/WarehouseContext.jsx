@@ -1,5 +1,5 @@
 "use client"
-import React, { createContext, useContext, useReducer } from "react";
+import React, { createContext, useContext, useReducer, useEffect } from "react";
 
 // Define initial state and reducer
 const initialState = {
@@ -7,7 +7,6 @@ const initialState = {
 };
 
 const warehouseReducer = (state, action) => {
-    console.log(state.warehouses);
   switch (action.type) {
     case "ADD_WAREHOUSE":
       return {
@@ -25,7 +24,14 @@ const WarehouseContext = createContext();
 
 // Create a provider component
 const WarehouseProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(warehouseReducer, initialState);
+  // Retrieve state from local storage on component mount
+  const storedState = JSON.parse(localStorage.getItem("warehouseState")) || initialState;
+  const [state, dispatch] = useReducer(warehouseReducer, storedState);
+
+  // Update local storage whenever the state changes
+  useEffect(() => {
+    localStorage.setItem("warehouseState", JSON.stringify(state));
+  }, [state]);
 
   // Add any additional functions or state modifications here
 

@@ -12,13 +12,13 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useWarehouseContext } from "@/components/contextapi/WarehouseContext";
+import { number } from "zod";
 
 const WarehouseInput = () => {
   const [formData, setFormData] = useState({
     name: "",
     location: "",
-    sunlight: "",
-    pesticides: "",
+    capacity: "",
 
   });
   const { state, dispatch } = useWarehouseContext();
@@ -71,20 +71,27 @@ const WarehouseInput = () => {
     if (validateForm()) {
       try {
         dispatch({ type: "ADD_WAREHOUSE", payload: formData });
+        const backendUrl = process.env.BACKEND_URL;
+        let userId = localStorage.getItem("userId");
 
-        const response = await fetch("http://localhost:5000/warehouse/createwarehouse", {
+        if (userId && typeof userId === 'string') {
+          userId = userId.replace(/^"(.*)"$/, '$1');         
+        }
+        formData["userId"] = userId;
+
+        const response = await fetch(`${backendUrl}/warehouse/createwarehouse`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(formData),
-        });
+          withCredentials: true,
+        });
 
         if (response.ok) {
           const data = await response.json();
           console.log("Warehouse creation successful. Received data:", data);
 
-          // Use the router to navigate to the next page
           router.push('/CropInput');
         } else {
           console.error("Warehouse creation failed. Status:", response.status);
@@ -107,8 +114,7 @@ const WarehouseInput = () => {
     // For example, check if all required fields are filled
     if(!formData.name &&
         !formData.location &&
-        !formData.sunlight &&
-        !formData.pesticides ){
+        !formData.capacity ){
             return false;
         }
         else{
@@ -121,12 +127,8 @@ const WarehouseInput = () => {
 
   const {
     name,
-    location,
-    moisture,
-    oxygen,
-    sunlight,
-    pesticides,
-    temperature,
+    location,  
+    capacity,
   } = formData;
 
   return (
@@ -184,7 +186,7 @@ const WarehouseInput = () => {
                   </div>
                   
                   
-                  <div>
+                  {/* <div>
                     <label className="flex flex-row gap-4 items-center ">
                       <p className="">Sunlight</p>
                       <input
@@ -212,26 +214,25 @@ const WarehouseInput = () => {
                       />
                       <p className="">Low</p>
                     </label>
-                  </div>
+                  </div> */}
                   <div>
                     <label className="flex flex-row gap-4 items-center">
-                      <p className="">Pesticide</p>
+                      <p className="">Capacity</p>
+
                       <input
                         required
-                        type="radio"
-                        name="pesticides"
-                        value={"yes"}
+                        type="number"
+                        name="capacity"
+                        value={capacity}
                         onChange={handleOnChange}
+                        placeholder="Enter Warehouse Capacity"
+                        style={{
+                          boxShadow:
+                            "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+                        }}
+                        className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
                       />
-                      <p className="">Yes</p>
-                      <input
-                        required
-                        type="radio"
-                        name="pesticides"
-                        value={"no"}
-                        onChange={handleOnChange}
-                      />
-                      <p className="">No</p>
+                      {/* <p className="">No</p> */}
                     </label>
                   </div>
                  
