@@ -2,32 +2,56 @@
 
 const cards = [
   {
-    warehouse: "Warehouse 1",
-    crop: "Wheat",
+    warehouse: "warehouse-1",
+    crop: "wheat",
     params: [
       {
         id: 1,
         title: "Temperature",
         number: 20,
-        change: 0,
+        change: 20,
       },
       {
         id: 2,
         title: "Humidity",
+        number: 50,
+        change: 2,
+      },
+      {
+        id: 3,
+        title: "Oxygen",
         number: 20,
-        change: 0,
+        change: -12,
+      },
+    ],
+  },
+  {
+    warehouse: "warehouse-1",
+    crop: "corn",
+    params: [
+      {
+        id: 1,
+        title: "Temperature",
+        number: 21,
+        change: 3,
+      },
+      {
+        id: 2,
+        title: "Humidity",
+        number: 324,
+        change: -10,
       },
       {
         id: 3,
         title: "Ventilation",
         number: 20,
-        change: 0,
+        change: 40,
       },
     ],
   },
   {
-    warehouse: "Warehouse 1",
-    crop: "Wheat",
+    warehouse: "warehouse-2",
+    crop: "wheat",
     params: [
       {
         id: 1,
@@ -51,26 +75,5 @@ const cards = [
   },
 ];
 
-  const chartData = [
-    {
-      name: "Page A",
-      uv: Math.random() * 4000,
-      pv: Math.random() * 3000,
-      amt: Math.random() * 3000,
-    },
-    {
-      name: "Page B",
-      uv: Math.random() * 4000,
-      pv: Math.random() * 3000,
-      amt: Math.random() * 3000,
-    },
-    {
-      name: "Page C",
-      uv: Math.random() * 4000,
-      pv: Math.random() * 3000,
-      amt: Math.random() * 3000,
-    },
-  ];
 
-
-export { cards, chartData };
+export { cards };
