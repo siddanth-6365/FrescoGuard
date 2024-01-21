@@ -1,5 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
+import { FaChevronLeft } from "react-icons/fa";
 import {
   Card,
   CardContent,
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { useWarehouseContext } from "@/components/contextapi/WarehouseContext";
 import { useToast } from "@/components/ui/use-toast"
+import Link from "next/link";
 
 // Import statements (please include any necessary imports)
 
@@ -64,7 +66,7 @@ const CropInput = () => {
       e.preventDefault();
       if (cropName && quantity) {
         const newCrop = {
-          name: cropName,
+          crop: cropName,
           quantity: quantity,
           sunlight: sunlight,
           pesticide: pesticide,
@@ -104,6 +106,7 @@ const CropInput = () => {
             // setPesticide("0");
             // setMoisture("");
             // setTemperature("");
+            window.location.href = '/dashboard';
           } else {
             console.error('Failed to add new crop.');
           }
@@ -116,7 +119,9 @@ const CropInput = () => {
   
     return (
       <>
-       <div className="flex items-center justify-center h-screen bg-gray-100">
+    
+        
+    <div className="flex items-center justify-center h-screen bg-black">
       <Card className="w-96 p-6 border border-gray-300 shadow-md bg-white rounded-md">
         <CardHeader className="border-b pb-2 mb-4">
           <CardTitle className="text-lg font-semibold text-gray-800">Crop Input Form</CardTitle>
@@ -149,13 +154,25 @@ const CropInput = () => {
               <label htmlFor="cropName" className="mb-1 text-sm font-medium text-gray-700">
                 Crop Name:
               </label>
-              <input
-                type="text"
+              <select
                 id="cropName"
+             
                 value={cropName}
                 onChange={(e) => setCropName(e.target.value)}
                 className="py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-              />
+              >
+                <option value="" disabled>
+                  Select Warehouse
+                </option>
+                <option>
+                    Rice
+                </option>
+                <option>
+                    Wheat
+                </option><option>
+                    Corn
+                </option>
+              </select>
             </div>
 
             <div className="flex flex-col">
@@ -244,6 +261,7 @@ const CropInput = () => {
         </CardContent>
       </Card>
     </div>
+ 
       </>
     );
   };
