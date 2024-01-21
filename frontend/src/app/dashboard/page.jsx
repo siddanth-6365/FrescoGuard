@@ -7,6 +7,7 @@ import Rightbar from "../../components/ui/dashboard/rightbar/rightbar";
 import PercentageDonutChart from "../../components/ui/dashboard/donut/index";
 import Select from "react-select";
 import { cards } from "./dummyData";
+import getRecommendations from "./recomandations";
 
 const chartsData = [
   {
@@ -67,7 +68,6 @@ const getProductsByWarehouse = (selectedWarehouse, data) => {
   const targetWarehouse = data.filter((warehouse) => {
     if (warehouse.name === selectedWarehouse) return warehouse;
   });
-
   console.log("targetWarehouse :", targetWarehouse);
   return targetWarehouse;
 };
@@ -81,7 +81,8 @@ const CropItems = [
 const Dashboard = () => {
   const [selectedWarehouse, setSelectedWarehouse] = useState();
   const [availableWarehouse, setAvailableWarehouse] = useState([]);
-  const [selectedCrop, setSelectedCrop] = useState("Wheat");
+  const [selectedCrop, setSelectedCrop] = useState("wheat");
+  const [recommendations, setRecommendations] = useState([]);
   const [data, setData] = useState([]);
   const [dynamicCards, setDynamicCards] = useState([]);
   const [dynamicChart, setDynamicChart] = useState(chartsData);
@@ -161,6 +162,8 @@ const Dashboard = () => {
           const temperature = generateRandomValues(20, 30);
           const moisture = generateRandomValues(20, 30);
           const oxygen = generateRandomValues(0, 7);
+          const recom = getRecommendations(selectedCrop, temperature, moisture,oxygen);
+          setRecommendations(recom);
 
           const dynamicCards = [
             {
@@ -273,7 +276,7 @@ const Dashboard = () => {
         <Chart data={dynamicChart} />
       </div>
       <div className={styles.side}>
-        <Rightbar />
+        <Rightbar recommendations={recommendations} />
       </div>
     </div>
   );
