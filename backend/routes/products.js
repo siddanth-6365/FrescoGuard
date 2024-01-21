@@ -9,7 +9,7 @@ router.route("/createproduct")
     .post(catchAsync(product.createProduct))
 
 
-router.route("/getproduct/:id") 
+router.route("/getproduct/:warehouse_id/:name") 
     .get(catchAsync(product.getProduct))
 
 

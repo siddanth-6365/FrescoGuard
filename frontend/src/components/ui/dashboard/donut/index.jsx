@@ -5,7 +5,7 @@ const PercentageDonutChart = ({ percentage, label1 }) => {
   // Ensure the percentage is between 0 and 100
   const clampedPercentage = Math.min(Math.max(0, percentage), 100);
 
-  // Calculate the remaining percentage to display an unfilled portion
+  // // Calculate the remaining percentage to display an unfilled portion
   const remainingPercentage = 100 - clampedPercentage;
 
   // Create data for the DonutChart

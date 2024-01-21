@@ -31,11 +31,22 @@ module.exports.createProduct = async (req, res) => {
 };
 
 
-// module.exports.getProduct = async (req, res) => {
-//     const { id } = req.params;
-//     const product = await Product.findById(id);
-//     res.status(200).json(product);
-// };
+module.exports.getProduct = async (req, res) => {
+    try {
+        const { warehouse_id, name } = req.params;
+
+        const product = await Product.findOne({ warehouse: warehouse_id, crop: name });
+
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        res.status(200).json(product);
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
 
 module.exports.getAllProducts = async (req, res) => {
     const { warehouse_id } = req.params;
