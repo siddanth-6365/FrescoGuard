@@ -7,6 +7,7 @@ import Rightbar from "../../components/ui/dashboard/rightbar/rightbar";
 import PercentageDonutChart from "../../components/ui/dashboard/donut/index";
 import Select from "react-select";
 import { cards } from "./dummyData";
+import getRecommendations from "./recomandations";
 
 const chartsData = [
   {
@@ -64,9 +65,10 @@ const getWarehousesItems = (warehouse) => {
 const getProductsByWarehouse = (selectedWarehouse, data) => {
   console.log("selectedWarehouse :", selectedWarehouse);
   console.log("data :", data);
-  const targetWarehouse = data.filter((warehouse) => { if(warehouse.name === selectedWarehouse) return warehouse });
-  
-  console.log("targetWarehouse :", targetWarehouse)
+  const targetWarehouse = data.filter((warehouse) => {
+    if (warehouse.name === selectedWarehouse) return warehouse;
+  });
+  console.log("targetWarehouse :", targetWarehouse);
   return targetWarehouse;
 };
 
@@ -87,6 +89,7 @@ const Dashboard = () => {
   const [selectedWarehouse, setSelectedWarehouse] = useState();
   const [availableWarehouse, setAvailableWarehouse] = useState([]);
   const [selectedCrop, setSelectedCrop] = useState("wheat");
+  const [recommendations, setRecommendations] = useState([]);
   const [data, setData] = useState([]);
   const [dynamicCards, setDynamicCards] = useState([]);
   const [dynamicChart, setDynamicChart] = useState(chartsData);
@@ -102,45 +105,6 @@ const Dashboard = () => {
   const handleCropChange = (crop) => {
     setSelectedCrop(crop.value);
   };
-
-  // useEffect(async () => {
-  //   try {
-  //     const res = await fetch("http://localhost:5000/dashboard/model", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({
-  //         // Construct payload with constant and updated params
-  //         ...selectedCrop, // Assuming you have selected crop data
-  //         temperature: temperature,
-  //         humidity: humidity,
-  //         oxygen: oxygen,
-  //       }),
-  //     });
-  //     const prediction = await res.json();
-  //     setModelPrediction(prediction);
-  //   } catch (error) {
-  //     console.error("API call error:", error);
-  //   }
-  // }, [selectedCrop]);
-
-  // useEffect(() => {
-  //   // Filter cards based on selected warehouse and crop
-  //   const filteredCards = cards
-  //     .filter(
-  //       (item) =>
-  //         item.crop.toLowerCase() === selectedCrop?.toLowerCase() 
-  //     )
-  //     .flatMap((item) => item.params);
-  //   //  const filteredCards = cards.flatMap((item) => item.params);
-
-  //   console.log("card :", filteredCards);
-  //   setDynamicCards(filteredCards);
-
-  //   // const filteredChart = chartsData.filter(
-  //   //   (data) => data.name.toLowerCase() === selectedWarehouse?.toLowerCase()
-  //   // );
-  //   // setDynamicChart(filteredChart);
-  // }, [selectedWarehouse, selectedCrop]);
 
   useEffect(() => {
     const getWarehouse = async () => {
@@ -167,32 +131,29 @@ const Dashboard = () => {
         console.error("Error fetching crops data:", error);
       }
     };
+    const getRecommendations = async () => {};
     getWarehouse();
   }, []);
 
   useEffect(() => {
-    const cropsitems = getProductsByWarehouse(selectedWarehouse,data);
+    const cropsitems = getProductsByWarehouse(selectedWarehouse, data);
     console.log(data);
     setSelectedCrop(cropsitems);
   }, [selectedWarehouse]);
 
-  
-  
-  console.log("cropsitems :", selectedCrop);
   return (
     <div className={styles.wrapper}>
       <div className={styles.main}>
         <div className="flex gap-6">
           <Select
             options={availableWarehouse}
-   
             onChange={handleWarehouseChange}
           />
           <Select
-            options={getpropitems(selectedCrop.products)}
+            options={CropItems}
             value={{
-              value: selectedCrop.products,
-              label: selectedCrop.products
+              value: selectedCrop,
+              label: selectedCrop,
             }}
             onChange={handleCropChange}
           />
