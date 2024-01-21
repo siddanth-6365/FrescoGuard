@@ -16,5 +16,23 @@ const PercentageDonutChart = ({ percentage, label1 }) => {
 
   return <DonutChart data={data} />;
 };
+const PercentageDonut2Chart = ({ percentage, label1 }) => {
+  // Ensure the percentage is between 0 and 100
+  const clampedPercentage = Math.min(Math.max(0, percentage), 1000);
 
-export default PercentageDonutChart;
+  // // Calculate the remaining percentage to display an unfilled portion
+  const remainingPercentage = 1000 - clampedPercentage;
+
+  // Create data for the DonutChart
+  const data = [
+    { label:  label1 , value: clampedPercentage, className: "filled" },
+    { label: "Remaining", value: remainingPercentage, className: "remaining" },
+  ];
+
+  return <DonutChart data={data} />;
+};
+
+
+
+
+export  {PercentageDonutChart,PercentageDonut2Chart};

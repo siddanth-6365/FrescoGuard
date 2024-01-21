@@ -4,10 +4,9 @@ import Card from "../../components/ui/dashboard/card/card";
 import Chart from "../../components/ui/dashboard/chart/chart";
 import styles from "../../components/ui/dashboard/dashboard.module.css";
 import Rightbar from "../../components/ui/dashboard/rightbar/rightbar";
-import PercentageDonutChart from "../../components/ui/dashboard/donut/index";
+import {PercentageDonutChart,  PercentageDonut2Chart } from "../../components/ui/dashboard/donut/index";
 import Select from "react-select";
 import { cards } from "./dummyData";
-import getRecommendations from "./recomandations";
 
 const chartsData = [
   {
@@ -62,27 +61,16 @@ const getWarehousesItems = (warehouse) => {
   }));
 };
 
-const getProductsByWarehouse = (selectedWarehouse, data) => {
-  console.log("selectedWarehouse :", selectedWarehouse);
-  console.log("data :", data);
-  const targetWarehouse = data.filter((warehouse) => {
-    if (warehouse.name === selectedWarehouse) return warehouse;
-  });
-  console.log("targetWarehouse :", targetWarehouse);
-  return targetWarehouse;
-};
 
-const CropItems = [
-  { value: "Wheat", label: "Wheat" },
-  { value: "Rice", label: "Rice" },
-  { value: "Corn", label: "Corn" },
-];
+
+
 
 const Dashboard = () => {
+
+const [CropItems,setCropItems]=useState([]);
   const [selectedWarehouse, setSelectedWarehouse] = useState();
   const [availableWarehouse, setAvailableWarehouse] = useState([]);
-  const [selectedCrop, setSelectedCrop] = useState("wheat");
-  const [recommendations, setRecommendations] = useState([]);
+  const [selectedCrop, setSelectedCrop] = useState("Wheat");
   const [data, setData] = useState([]);
   const [dynamicCards, setDynamicCards] = useState([]);
   const [dynamicChart, setDynamicChart] = useState(chartsData);
@@ -97,8 +85,8 @@ const Dashboard = () => {
     setSelectedWarehouse(warehouse.value);
   };
 
-  const handleCropChange = (crop) => {
-    setSelectedCrop(crop.value);
+  const handleCropChange = (e) => {
+    setSelectedCrop(e.target.value);
   };
 
   useEffect(() => {
@@ -162,8 +150,6 @@ const Dashboard = () => {
           const temperature = generateRandomValues(20, 30);
           const moisture = generateRandomValues(20, 30);
           const oxygen = generateRandomValues(0, 7);
-          const recom = getRecommendations(selectedCrop, temperature, moisture,oxygen);
-          setRecommendations(recom);
 
           const dynamicCards = [
             {
@@ -224,9 +210,27 @@ const Dashboard = () => {
         console.error("Error fetching crops data:", error);
       }
     };
+    const getProductsByWarehouse = async () => {
+      try {
+        const apiUrl = `${backendUrl}/product/getallproducts/${warehouseId}`;
+        const response = await fetch(apiUrl);
+        if (response.ok) {
+          const data = await response.json();
+         setCropItems(data);
+         console.log("ALL Crops Present");
+          console.log(data);
+        } else {
+          console.error('Failed to fetch crops data.');
+        }
+      } catch (error) {
+        console.error('Error fetching crops data:', error);
+      }
+    };
 
     getWarehouse();
-  }, [selectedWarehouse, selectedCrop]);
+    getProductsByWarehouse();
+    
+  }, [selectedWarehouse,selectedCrop]);
 
   return (
     <div className={styles.wrapper}>
@@ -236,14 +240,25 @@ const Dashboard = () => {
             options={availableWarehouse}
             onChange={handleWarehouseChange}
           />
-          <Select
+          {/* <Select
             options={CropItems}
             value={{
               value: selectedCrop,
               label: selectedCrop,
             }}
             onChange={handleCropChange}
-          />
+          /> */}
+          <select onChange={handleCropChange}>
+            {
+              CropItems.map((crop,index)=>{
+                return(
+                  <>
+                 <option>{crop.crop}</option>
+                  </>
+                )
+              })
+            }
+          </select>
         </div>
         <div className={styles.cards}>
           {dynamicCards.length === 0 ? (
@@ -262,7 +277,7 @@ const Dashboard = () => {
             label1={"Spoilage"}
             style={{ height: "250px", width: "250px" }}
           />
-          <PercentageDonutChart
+          <PercentageDonut2Chart
             percentage={modelPrediction.life}
             label1={"life Span"}
             style={{ height: "250px", width: "250px" }}
@@ -276,7 +291,7 @@ const Dashboard = () => {
         <Chart data={dynamicChart} />
       </div>
       <div className={styles.side}>
-        <Rightbar recommendations={recommendations} />
+        <Rightbar />
       </div>
     </div>
   );
